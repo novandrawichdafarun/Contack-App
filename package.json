@@ -1,0 +1,25 @@
+{
+  "name": "contack-app",
+  "version": "1.0.0",
+  "description": "Contack App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/novandrawichdafarun/Contack-App.git"
+  },
+  "author": "Novandra Wichda Farun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/novandrawichdafarun/Contack-App/issues"
+  },
+  "homepage": "https://github.com/novandrawichdafarun/Contack-App#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "validator": "^13.5.2",
+    "yargs": "^16.2.0"
+  },
+  "type": "module"
+}
