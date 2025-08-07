@@ -1,1 +1,12 @@
-[{"nama":"Novandra Wichda Farun","nomorHp":"0882009633169"}]
+[
+  {
+    "nama": "Novandra Wichda Farun",
+    "email": "vandraSurabaya@gamil.com",
+    "nomorHp": "0882009633169"
+  },
+  {
+    "nama": "Otong Surotong",
+    "email": "OtongBandung@gamil.com",
+    "nomorHp": "08836471213"
+  }
+]
