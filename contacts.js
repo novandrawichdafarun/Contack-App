@@ -1,12 +1,8 @@
 import fs from "node:fs";
-import readline from "node:readline";
-import { stdin as input, stdout as output } from "node:process";
 import chalk from "chalk";
 import validator from "validator";
 
-export { tulisPertanyaan, simpanContacts };
-
-const rl = readline.createInterface({ input, output });
+export { simpanContacts, listContact, detailContact, deleteContact };
 
 //? Membuat folder data jika belum ada
 const dirPath = "./data";
@@ -20,18 +16,15 @@ if (!fs.existsSync(dataPath)) {
   fs.writeFileSync(dataPath, "[]", "utf-8");
 }
 
-const tulisPertanyaan = (pertanyaan) => {
-  return new Promise((resolve, rejects) => {
-    rl.question(pertanyaan, (value) => {
-      resolve(value);
-    });
-  });
+const loadContact = () => {
+  const fileBuffer = fs.readFileSync("data/contacts.json", "utf-8");
+  const contacts = JSON.parse(fileBuffer);
+  return contacts;
 };
 
 const simpanContacts = (nama, email, nomorHp) => {
   const contact = { nama, email, nomorHp };
-  const fileBuffer = fs.readFileSync("data/contacts.json", "utf-8");
-  const contacts = JSON.parse(fileBuffer);
+  const contacts = loadContact();
 
   //? cek duplikasi
   const duplikatNama = contacts.find((contact) => contact.nama === nama);
@@ -40,11 +33,9 @@ const simpanContacts = (nama, email, nomorHp) => {
   );
   if (duplikatNama) {
     console.log(chalk.red.bold("Nama sudah terdaftar, gunakan Nama lain"));
-    rl.close();
     return false;
   } else if (duplikatNomorHp) {
     console.log(chalk.red.bold("Nomor sudah terdaftar, gunakan Nomor lain"));
-    rl.close();
     return false;
   }
 
@@ -52,15 +43,13 @@ const simpanContacts = (nama, email, nomorHp) => {
   if (email) {
     if (!validator.isEmail(email)) {
       console.log(chalk.red.bold("Email tidak valid"));
-      rl.close();
       return false;
     }
   }
 
   //? cek NomorHp
-  if (!validator.isMobilePhone(nomorHp, 'id-ID')) {
+  if (!validator.isMobilePhone(nomorHp, "id-ID")) {
     console.log(chalk.red.bold("Nomor Handphone tidak valid"));
-    rl.close();
     return false;
   }
 
@@ -68,5 +57,43 @@ const simpanContacts = (nama, email, nomorHp) => {
 
   fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
   console.log(chalk.green.bold("Pendaftaran Berhasil!!"));
-  rl.close();
+};
+
+const listContact = () => {
+  const contacts = loadContact();
+  console.log(chalk.cyan.bold("Daftar Kontak : "));
+  contacts.forEach((contact, i) => {
+    console.log(`${i + 1}. ${contact.nama} ~ ${contact.nomorHp}`);
+  });
+};
+
+const detailContact = (nama) => {
+  const contacts = loadContact();
+  const contact = contacts.find(
+    (contact) => contact.nama.toLowerCase() === nama.toLowerCase()
+  );
+
+  if (!contact) {
+    console.log(chalk.red.bold(`${nama} tidak terdaftar!`));
+    return false;
+  }
+
+  console.log(chalk.cyan.bold("Detail Contact :"));
+  console.log(`Nama : ${contact.nama}`);
+  console.log(`Nomor HP : ${contact.nomorHp}`);
+  if (contact.email) console.log(`Email : ${contact.email}`);
+};
+
+const deleteContact = (nama) => {
+  const contacts = loadContact();
+  const newContacts = contacts.filter(
+    (contact) => contact.nama.toLowerCase() !== nama.toLowerCase()
+  );
+  if (contacts.length === newContacts.length) {
+    console.log(chalk.red.bold(`${nama} tidak terdaftar!`));
+    return false;
+  }
+
+  fs.writeFileSync("data/contacts.json", JSON.stringify(newContacts));
+  console.log(chalk.green.bold(`Data Contact ${nama} berhasil di hapus`));
 };
