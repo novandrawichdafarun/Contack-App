@@ -11,6 +11,7 @@ app.set("view engine", "ejs");
 app.use(expressLayouts);
 app.use(morgan("dev"));
 
+
 //? Build-in Middleware
 app.use(express.static("public"));
 
