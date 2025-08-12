@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-export { loadContact, findContact };
+export { loadContact, findContact, addContact, cekDuplikat };
 
 //? Membuat folder data jika belum ada
 const dirPath = "./data";
@@ -26,4 +26,22 @@ const findContact = (nama) => {
   const contacts = loadContact();
   const contact = contacts.find((contact) => contact.nama === nama);
   return contact;
+};
+
+//? Menulis file contacts json dengan data yang baru
+const saveContacts = (contacts) => {
+  fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
+};
+
+//? Menambahkan data contact baru
+const addContact = (contact) => {
+  const contacts = loadContact();
+  contacts.push(contact);
+  saveContacts(contacts);
+};
+
+//? cek nama yang duplikat
+const cekDuplikat = (nama) => {
+  const contacts = loadContact();
+  return contacts.find((contact) => contact.nama === nama);
 };
