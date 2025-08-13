@@ -5,6 +5,8 @@ const {
   findContact,
   addContact,
   cekDuplikat,
+  deleteContact,
+  updateContacts,
 } = require("./utils/contacts");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -112,6 +114,63 @@ app.post(
       addContact(req.body);
       //! Kirim flash message
       req.flash("msg", "Data contact berhasi ditambahkan!");
+      res.redirect("/contact");
+    }
+  }
+);
+
+//? Delete Contact
+app.get("/contact/delete/:nama", (req, res) => {
+  const contact = findContact(req.params.nama);
+
+  if (!contact) {
+    res.status(404);
+    res.send("<h1>404</h1>");
+  } else {
+    deleteContact(req.params.nama);
+    req.flash("msg", "Data contact berhasi dihapus!");
+    res.redirect("/contact");
+  }
+});
+
+//? Form ubah data contact
+app.get("/contact/edit/:nama", (req, res) => {
+  const contact = findContact(req.params.nama);
+  res.render("edit-contact", {
+    title: "From Ubah Data Contact",
+    layout: "layouts/main-layout",
+    contact,
+  });
+});
+
+//? Prosess ubah data
+app.post(
+  "/contact/update",
+  [
+    body("nama").custom((value, { req }) => {
+      const duplikat = cekDuplikat(value);
+      if (value !== req.body.oldNama && duplikat) {
+        throw new Error("Nama contact sudah digunakan!");
+      }
+      return true;
+    }),
+    check("email", "Email Tidak Valid!").isEmail(),
+    check("nomorHp", "Nomor Hp tidak Valid!").isMobilePhone("id-ID"),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // return res.status(404).json({ errors: errors.array() });
+      res.render("edit-contact", {
+        title: "From Ubah Data Contact",
+        layout: "layouts/main-layout",
+        errors: errors.array(),
+        contact: req.body,
+      });
+    } else {
+      updateContacts(req.body);
+      //! Kirim flash message
+      req.flash("msg", "Data contact berhasi diubah!");
       res.redirect("/contact");
     }
   }

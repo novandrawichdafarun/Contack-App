@@ -1,6 +1,13 @@
 import fs from "node:fs";
 
-export { loadContact, findContact, addContact, cekDuplikat };
+export {
+  loadContact,
+  findContact,
+  addContact,
+  cekDuplikat,
+  deleteContact,
+  updateContacts,
+};
 
 //? Membuat folder data jika belum ada
 const dirPath = "./data";
@@ -44,4 +51,22 @@ const addContact = (contact) => {
 const cekDuplikat = (nama) => {
   const contacts = loadContact();
   return contacts.find((contact) => contact.nama === nama);
+};
+
+//? Hapus Contact
+const deleteContact = (nama) => {
+  const contacts = loadContact();
+  const newContacts = contacts.filter((contact) => contact.nama !== nama);
+  saveContacts(newContacts);
+};
+
+//? Mengubah contacts
+const updateContacts = (contactBaru) => {
+  const contacts = loadContact();
+  const newContacts = contacts.filter(
+    (contact) => contact.nama !== contactBaru.oldNama
+  );
+  delete contactBaru.oldNama;
+  newContacts.push(contactBaru);
+  saveContacts(newContacts);
 };
