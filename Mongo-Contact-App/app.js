@@ -187,12 +187,12 @@ app.get("/contact/:nama", async (req, res) => {
 });
 
 //? Menangani Jika Halaman web tidak ada
-// app.use("/", (req, res) => {
-//   res.status(404);
-//   res.render("404page", {
-//     title: "Error 404",
-//   });
-// });
+app.use("/", (req, res) => {
+  res.status(404).render("404page", {
+    title: "404 - Page Not Found",
+    layout: "layouts/main-layout",
+  });
+});
 
 app.listen(port, () => {
   console.log(`Mongo Contact App | listening at http://localhost:${port}`);
